@@ -15,9 +15,9 @@ namespace SocialWebApp.API.Controllers
     public class UsersController : ControllerBase
     {
     
-        private readonly IMainRepository _repo;
+        private readonly IUserRepository _repo;
         private readonly IMapper _mapper;
-        public UsersController(IMainRepository repo, IMapper mapper)
+        public UsersController(IUserRepository repo, IMapper mapper)
         {           
             _repo = repo;
             _mapper = mapper;

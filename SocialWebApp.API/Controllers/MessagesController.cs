@@ -16,12 +16,15 @@ namespace SocialWebApp.API.Controllers
     [ApiController]
     public class MessagesController : ControllerBase
     {
-        private readonly IMainRepository _repo;
+        private readonly IUserRepository _repo;
         private readonly IMapper _mapper;
-        public MessagesController(IMainRepository repo, IMapper mapper)
+
+        private readonly IMessageRepository _messageRepo;
+        public MessagesController(IUserRepository repo, IMapper mapper, IMessageRepository messageRepo)
         {
             _mapper = mapper;
             _repo = repo;
+            _messageRepo = messageRepo;
         }
 
         [HttpGet("{id}", Name = "GetMessage")]
@@ -30,7 +33,7 @@ namespace SocialWebApp.API.Controllers
             if(userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var messageFromRepo = await _repo.GetMessage(id);
+            var messageFromRepo = await _messageRepo.GetMessage(id);
 
             if (messageFromRepo == null)
                 return NotFound();
@@ -46,7 +49,7 @@ namespace SocialWebApp.API.Controllers
 
             messageParams.UserId = userId;
             
-            var messagesFromRepo = await _repo.GetMessagesForUser(messageParams);
+            var messagesFromRepo = await _messageRepo.GetMessagesForUser(messageParams);
 
             var messages = _mapper.Map<IEnumerable<MessageToReturnDto>>(messagesFromRepo);
 
@@ -61,7 +64,7 @@ namespace SocialWebApp.API.Controllers
             if(userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
 
-            var messageFromRepo = await _repo.GetMessageThread(userId, recipientId);
+            var messageFromRepo = await _messageRepo.GetMessageThread(userId, recipientId);
 
             var messageThread = _mapper.Map<IEnumerable<MessageToReturnDto>>(messageFromRepo);
 
